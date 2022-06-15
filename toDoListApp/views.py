@@ -20,13 +20,26 @@ class TaskView(View):
     def get(self, request):
 
         tasks = Task.objects.all()
+
         task_serialized_data = serialize('python', tasks)
 
-        data = {
-            'tasks': task_serialized_data
+        count_of_instance = Task.objects.count()
+
+        instance_output_list_of_dicts = list(dict())
+        for i in range(count_of_instance):
+            task_id = task_serialized_data[i]['pk']
+            fields_task_dict = task_serialized_data[i]['fields']
+            fields_task_dict['task_id'] = task_id
+            instance_output_list_of_dicts.append({'task_id': task_id,
+                                                  'task_name': fields_task_dict['task_name'],
+                                                  'task_description': fields_task_dict['task_description'],
+                                                  'task_status': fields_task_dict['task_status']})
+
+        output_data = {
+            "tasks": instance_output_list_of_dicts
         }
 
-        return JsonResponse(data)
+        return JsonResponse(output_data, safe=False)
 
     # Метод для создания задачи
     def post(self, request):
