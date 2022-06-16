@@ -1,7 +1,7 @@
 from django.db import models
 
 # Модель папки
-from django.db.models.signals import post_init
+from django.db.models.signals import post_save
 
 
 class Folder(models.Model):
@@ -18,7 +18,7 @@ class Folder(models.Model):
     # Если совпадает с ID этой папки, то родительской нет
     # При удалении папки-родителя, дочерняя папка тоже удаляется
     parent_folder = models.ForeignKey(to='self', verbose_name='ID родительской папки', on_delete=models.CASCADE,
-                                      null=True, blank=True)
+                                      null=True, blank=True, default=None)
 
     # Сигнал (триггер). Если приходит null в FK родительской папки - заменяет его на ID папки
     @staticmethod
@@ -31,7 +31,10 @@ class Folder(models.Model):
         return f"Папка {self.folder_id}: {self.folder_name}"
 
 
-post_init.connect(Folder.remember_state, sender=Folder)
+post_save.connect(Folder.remember_state, sender=Folder)
+
+
+# post_init.connect(Folder.remember_state, sender=Folder)
 
 
 # Модель задачи

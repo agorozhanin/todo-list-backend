@@ -1,9 +1,14 @@
 from django.urls import path
 
-from . import views
+from . import tasksViews, foldersViews
 
 # Создание путей
 urlpatterns = [
-    path('api/task/', views.TaskView.as_view()),
-    path('api/task/<int:task_id>/', views.TaskViewForIndexInEnd.as_view())
+    # Для задач
+    path('api/task/', tasksViews.TaskView.as_view()),
+    path('api/task/<int:task_id>/', tasksViews.TaskViewForIndexInEnd.as_view()),
+
+    # Для папок
+    path('api/folder/', foldersViews.FolderView.as_view()),
+    path('api/folder/<int:folder_id>/', foldersViews.FolderViewForIndexInEnd.as_view()),
 ]
