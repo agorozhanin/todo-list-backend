@@ -33,7 +33,8 @@ class TaskView(View):
             instance_output_list_of_dicts.append({'task_id': task_id,
                                                   'task_name': fields_task_dict['task_name'],
                                                   'task_description': fields_task_dict['task_description'],
-                                                  'task_status': fields_task_dict['task_status']})
+                                                  'task_status': fields_task_dict['task_status']
+                                                  })
 
         output_data = {
             "tasks": instance_output_list_of_dicts
