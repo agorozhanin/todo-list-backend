@@ -8,7 +8,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import Task
+from .models import Task, Folder
 from .validators import *
 
 
@@ -33,7 +33,8 @@ class TaskView(View):
             instance_output_list_of_dicts.append({'task_id': task_id,
                                                   'task_name': fields_task_dict['task_name'],
                                                   'task_description': fields_task_dict['task_description'],
-                                                  'task_status': fields_task_dict['task_status']
+                                                  'task_status': fields_task_dict['task_status'],
+                                                  'folder_id': fields_task_dict['folder_id']
                                                   })
 
         output_data = {
@@ -50,11 +51,13 @@ class TaskView(View):
         task_name = post_body.get('task_name')
         task_description = post_body.get('task_description')
         task_status = post_body.get('task_status')
+        folder_id = post_body.get('folder_id')
 
         task_data = {
             'task_name': task_name,
             'task_description': task_description,
             'task_status': task_status,
+            'folder_id': Folder.objects.get(folder_id=folder_id),
         }
 
         if task_name is not None and task_status is not None:
@@ -65,7 +68,8 @@ class TaskView(View):
                     'task_id': task_object.task_id,
                     'task_name': task_object.task_name,
                     'task_description': task_object.task_description,
-                    'task_status': task_object.task_status
+                    'task_status': task_object.task_status,
+                    'folder_id': task_object.folder_id.folder_id,
                 }
                 return JsonResponse(data, status=201)
 
@@ -140,6 +144,7 @@ class TaskViewForIndexInEnd(View):
             task_name = put_body.get('task_name')
             task_description = put_body.get('task_description')
             task_status = put_body.get('task_status')
+            folder_id = put_body.get('folder_id')
 
             if task_name is not None:
                 if is_correct_name(task_name):
@@ -164,13 +169,17 @@ class TaskViewForIndexInEnd(View):
                     }
                     return JsonResponse(data, status=404)
 
+            if folder_id is not None:
+                task.folder_id = Folder.objects.get(folder_id=folder_id)
+
             task.save()
 
             data = {
                 'task_id': task.task_id,
                 'task_name': task.task_name,
                 'task_description': task.task_description,
-                'task_status': task.task_status
+                'task_status': task.task_status,
+                'folder_id': task.folder_id.folder_id,
             }
             return JsonResponse(data, status=200)
 
@@ -192,6 +201,7 @@ class TaskViewForIndexInEnd(View):
                 'message': 'Success delete',
             }
             return JsonResponse(data, status=200)
+
         else:
             data = {
                 'message': 'Task did not find in database'

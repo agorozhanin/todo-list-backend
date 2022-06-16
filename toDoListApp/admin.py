@@ -1,7 +1,8 @@
 from django.contrib import admin
 
-# Регистрация модели "Задача" для суперюзера (админа)
-from .models import Task
+from .models import Task, Folder
 
-# Register your models here.
+# Регистрация модели "Задача" для суперюзера (админа)
 admin.site.register(Task)
+# Регистрация модели "Папка" для суперюзера (админа)
+admin.site.register(Folder)
